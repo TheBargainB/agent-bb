@@ -25,7 +25,7 @@ class GroceryProfile(BaseModel):
     )
     
     # Discovered product preferences (beyond basic dietary restrictions)
-    product_preferences: Dict[str, List[str]] = Field(
+    product_preferences: Dict[str, Dict[str, Any]] = Field(
         default_factory=dict,
         description="Learned brand preferences, quality expectations, discovered alternatives"
     )
