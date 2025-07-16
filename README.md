@@ -37,7 +37,7 @@ This assistant works globally by allowing users to configure:
 You can easily add support for any country by configuring:
 
 ```python
-from assistants_agent.user_config import UserConfig, GroceryStore, LocalizationConfig
+from my_agent.user_config import UserConfig, GroceryStore, LocalizationConfig
 
 # Example: German configuration
 german_config = UserConfig(
@@ -112,7 +112,7 @@ The assistant automatically adapts to your configuration:
 ## 📁 Project Structure
 
 ```
-assistants_agent/
+my_agent/
 ├── agents/
 │   ├── promotions_agent/    # Finds deals and promotions
 │   └── grocery_agent/       # Searches for specific products

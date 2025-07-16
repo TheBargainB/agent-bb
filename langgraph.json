@@ -1,6 +1,6 @@
 {
   "dependencies": [
-    "./assistants_agent"
+    "./my_agent"
   ],
   "graphs": {
     "supervisor_agent": "./my_agent/agent.py:graph"
