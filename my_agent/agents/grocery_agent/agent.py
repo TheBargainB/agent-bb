@@ -1,8 +1,8 @@
 """Grocery search agent implementation."""
 from langchain_core.runnables import RunnableConfig
-from assistants_agent.utils.graph import make_graph
-from assistants_agent.agents.grocery_agent.config import DEFAULT_GROCERY_CONFIG
-from assistants_agent.user_config import UserConfig
+from my_agent.utils.graph import make_graph
+from my_agent.agents.grocery_agent.config import DEFAULT_GROCERY_CONFIG
+from my_agent.user_config import UserConfig
 
 async def create_grocery_agent(agent_config: dict = None) -> object:
     """

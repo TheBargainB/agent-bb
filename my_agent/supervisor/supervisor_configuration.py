@@ -2,12 +2,19 @@
 from typing import Annotated, Literal
 from pydantic import BaseModel, Field
 from datetime import datetime
-from assistants_agent.user_config import UserConfig
+from my_agent.user_config import UserConfig
 
 today = datetime.now().strftime("%Y-%m-%d")
 
 class Configuration(BaseModel):
     """Unified configuration for the international supervisor and all sub-agents."""
+
+    # User identification
+    user_id: str = Field(
+        default="",
+        description="Unique identifier for the user session",
+        json_schema_extra={"langgraph_nodes": ["supervisor"]}
+    )
 
     # User preference fields (exposed in UI)
     country_code: str = Field(
@@ -205,6 +212,7 @@ def create_supervisor_system_prompt(user_config: UserConfig) -> str:
 You are the International Grocery Shopping Assistant for {country} orchestrating a team of specialized AI agents.
 
 USER CONFIGURATION:
+- User ID: {user_config.user_id or 'Not specified'}
 - Location: {country}
 - Language: {language}
 - Budget: {budget_guidance}

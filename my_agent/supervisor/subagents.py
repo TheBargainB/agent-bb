@@ -1,8 +1,8 @@
 """Create all subagents using individual agent files and configs."""
-from assistants_agent.supervisor.supervisor_configuration import Configuration
-from assistants_agent.agents.promotions_agent.agent import create_promotions_agent
-from assistants_agent.agents.grocery_agent.agent import create_grocery_agent
-from assistants_agent.user_config import UserConfig
+from my_agent.supervisor.supervisor_configuration import Configuration
+from my_agent.agents.promotions_agent.agent import create_promotions_agent
+from my_agent.agents.grocery_agent.agent import create_grocery_agent
+from my_agent.user_config import UserConfig
 
 # Load supervisor configuration
 supervisor_config = Configuration()
@@ -18,6 +18,7 @@ async def create_subagents(configurable: dict = None):
     user_config_data = configurable.get("user_config")
     if user_config_data is None:
         user_config = UserConfig(
+            user_id=configurable.get("user_id", ""),
             country_code=supervisor_config.country_code,
             language_code=supervisor_config.language_code,
             dietary_restrictions=supervisor_config.dietary_restrictions,
@@ -35,6 +36,7 @@ async def create_subagents(configurable: dict = None):
     else:
         # Fallback to building from individual fields
         user_config = UserConfig(
+            user_id=configurable.get("user_id", ""),
             country_code=supervisor_config.country_code,
             language_code=supervisor_config.language_code,
             dietary_restrictions=supervisor_config.dietary_restrictions,

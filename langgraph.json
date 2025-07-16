@@ -3,7 +3,7 @@
     "./assistants_agent"
   ],
   "graphs": {
-    "supervisor_agent": "./assistants_agent/agent.py:graph"
+    "supervisor_agent": "./my_agent/agent.py:graph"
   },
   "env": ".env"
 }

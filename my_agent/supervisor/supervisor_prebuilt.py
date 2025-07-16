@@ -1,7 +1,7 @@
 from langchain_core.runnables import RunnableConfig
-from assistants_agent.supervisor.supervisor_configuration import Configuration
-from assistants_agent.supervisor.subagents import create_subagents
-from assistants_agent.utils.utils import load_chat_model
+from my_agent.supervisor.supervisor_configuration import Configuration
+from my_agent.supervisor.subagents import create_subagents
+from my_agent.utils.utils import load_chat_model
 
 from langgraph_supervisor import create_supervisor
 

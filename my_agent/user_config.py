@@ -28,6 +28,9 @@ class BudgetLevel(str, Enum):
 class UserConfig(BaseModel):
     """International user configuration for personalizing agent responses."""
     
+    # User identification
+    user_id: Optional[str] = Field(default=None, description="Unique identifier for the user")
+    
     # Personal preferences
     name: Optional[str] = Field(default=None, description="User's name for personalization")
     

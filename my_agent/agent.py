@@ -4,10 +4,10 @@ This file exposes the compiled supervisor graph for LangGraph deployment.
 """
 
 from langchain_core.runnables import RunnableConfig
-from assistants_agent.supervisor.supervisor_configuration import Configuration, create_supervisor_system_prompt
-from assistants_agent.supervisor.subagents import create_subagents
-from assistants_agent.utils.utils import load_chat_model
-from assistants_agent.user_config import UserConfig, DietaryRestriction, BudgetLevel
+from my_agent.supervisor.supervisor_configuration import Configuration, create_supervisor_system_prompt
+from my_agent.supervisor.subagents import create_subagents
+from my_agent.utils.utils import load_chat_model
+from my_agent.user_config import UserConfig, DietaryRestriction, BudgetLevel
 
 from langgraph_supervisor import create_supervisor
 
@@ -27,6 +27,7 @@ async def make_supervisor_graph(config: RunnableConfig):
     
     # Build user config from region defaults
     user_config = UserConfig(
+        user_id=configurable.get("user_id", ""),
         country_code=country_code,
         language_code=language_code,
         dietary_restrictions=[DietaryRestriction.NONE], # Default to none
