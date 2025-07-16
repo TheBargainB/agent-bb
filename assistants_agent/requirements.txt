@@ -13,5 +13,7 @@ langgraph-sdk
 langgraph-supervisor
 pydantic
 python-dotenv
+trustcall
 typing-extensions
+uuid
 yfinance

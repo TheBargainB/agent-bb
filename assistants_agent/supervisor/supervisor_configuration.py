@@ -52,6 +52,31 @@ class Configuration(BaseModel):
         json_schema_extra={"langgraph_nodes": ["supervisor"]}
     )
 
+    # Memory configuration (Phase 1: disabled by default for backward compatibility)
+    memory_enabled: bool = Field(
+        default=False,
+        description="Enable memory features for learning user preferences and improving responses",
+        json_schema_extra={"langgraph_nodes": ["supervisor"]}
+    )
+    
+    memory_semantic_enabled: bool = Field(
+        default=False,
+        description="Enable semantic memory for learning user shopping patterns and preferences",
+        json_schema_extra={"langgraph_nodes": ["supervisor"]}
+    )
+    
+    memory_episodic_enabled: bool = Field(
+        default=False,
+        description="Enable episodic memory for tracking shopping sessions and performance",
+        json_schema_extra={"langgraph_nodes": ["supervisor"]}
+    )
+    
+    memory_procedural_enabled: bool = Field(
+        default=False,
+        description="Enable procedural memory for learning optimal routing and response strategies",
+        json_schema_extra={"langgraph_nodes": ["supervisor"]}
+    )
+
     # Supervisor config
     supervisor_system_prompt: str = Field(
         default=f"""Today's date is {today}
