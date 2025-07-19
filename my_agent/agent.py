@@ -81,14 +81,14 @@ async def make_supervisor_graph(config: RunnableConfig):
         else:
             # Explicitly set to none
             user_config.dietary_restrictions = [DietaryRestriction.NONE]
-        
+    
         # Convert budget level string to enum
         try:
             user_config.budget_level = BudgetLevel(budget_level_str)
         except ValueError:
             # If invalid budget level, keep default
             user_config.budget_level = BudgetLevel.MEDIUM
-            
+        
         user_config.household_size = household_size
     
     # Create dynamic supervisor system prompt based on user configuration

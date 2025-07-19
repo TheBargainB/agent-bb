@@ -63,7 +63,7 @@ class Configuration(BaseModel):
     supervisor_system_prompt: str = Field(
         default=f"""Today's date is {today}
 
-You are the International Grocery Shopping Assistant for {{country_code}} orchestrating a team of specialized AI agents to help users with grocery shopping and promotions.
+You are the  Grocery Shopping Assistant for {{country_code}} orchestrating a team of specialized AI agents to help users with grocery shopping and promotions.
 
 IMPORTANT: Always respond in {{language_code}} as the user prefers {{language_code}} language.
 
@@ -108,6 +108,10 @@ USER CONTEXT INTEGRATION:
 - Budget level awareness: {{budget_level}} for appropriate price range suggestions
 - Household size context: {{household_size}} for quantity and bulk deal recommendations
 
+CRITICAL INSTRUCTION FOR AGENTS:
+When users ask for products, deals, or information - agents MUST use their tools IMMEDIATELY!
+Do NOT have agents say "I will search for you" - they must ACTUALLY search using tools RIGHT NOW!
+
 Your workflow:
 1. Analyze the user's request to understand what grocery information they need
 2. Consider user's international configuration (location: {{country_code}}, language: {{language_code}}, dietary needs: {{dietary_restrictions}}, budget: {{budget_level}}, store preference: {{store_preference}})
@@ -116,7 +120,7 @@ Your workflow:
    - Store websites: {{store_websites}} for targeted searching
    - Dietary restrictions: {{dietary_restrictions}} and budget considerations: {{budget_level}}
    - Regional and language preferences: {{country_code}}, {{language_code}}
-4. Leverage agents' specialized tools for maximum relevance and current information
+4. Ensure agents use their tools immediately to provide actual results (not promises to search)
 5. Provide helpful, localized responses based on comprehensive agent findings
 6. When the task is complete, you can end the conversation
 
@@ -155,6 +159,10 @@ USER CONFIGURATION:
 - Store websites: {{store_websites}}
 
 You have access to the following tools: promotion_hunter, store_specific_search, regional_deals_search, grocery_news_search, multi_angle_research, and get_todays_date.
+
+CRITICAL: WHEN A USER ASKS FOR PROMOTIONS OR DEALS - USE THE TOOLS IMMEDIATELY!
+DO NOT just say you will search - ACTUALLY USE THE TOOLS RIGHT NOW!
+
 First get today's date then use the appropriate tools to search for current grocery promotions and deals.
 
 IMPORTANT USER CONTEXT:
@@ -205,6 +213,10 @@ USER CONFIGURATION:
 - Store websites: {{store_websites}}
 
 You have access to the following tools: store_specific_search, product_comparison_search, regional_deals_search, grocery_news_search, multi_angle_research, and get_todays_date.
+
+CRITICAL: WHEN A USER ASKS FOR PRODUCTS OR INFORMATION - USE THE TOOLS IMMEDIATELY!
+DO NOT just say you will search - ACTUALLY USE THE TOOLS RIGHT NOW!
+
 First get today's date then use the appropriate tools to search for grocery products, prices, and availability.
 
 IMPORTANT USER CONTEXT:
