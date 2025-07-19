@@ -53,7 +53,19 @@ USER PREFERENCES:
 When searching for products, prioritize the user's preferred store if specified and use the store websites for targeted searches."""
         personalized_prompt = f"{base_prompt}\n{user_context}"
     else:
-        personalized_prompt = config.get("system_prompt", DEFAULT_GROCERY_CONFIG.system_prompt)
+        # Use default prompt and replace placeholders with user config values
+        default_prompt = config.get("system_prompt", DEFAULT_GROCERY_CONFIG.system_prompt)
+        
+        # Replace placeholders with actual user values
+        personalized_prompt = default_prompt.format(
+            country_code=user_config.country_code,
+            language_code=user_config.language_code,
+            budget_level=user_config.budget_level.value,
+            dietary_restrictions=', '.join([dr.value for dr in user_config.dietary_restrictions]) if user_config.dietary_restrictions[0].value != "none" else "No restrictions",
+            household_size=user_config.household_size,
+            store_preference=user_config.store_preference,
+            store_websites=user_config.store_websites
+        )
     
     # Create agent configuration
     grocery_config = RunnableConfig(

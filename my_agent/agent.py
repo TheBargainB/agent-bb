@@ -60,8 +60,6 @@ async def make_supervisor_graph(config: RunnableConfig):
         store_websites=store_websites  # Use user's store websites or auto-generated defaults
     )
     
-
-    
     # Allow override with full user_config if provided - MOVED TO TOP for proper priority
     user_config_data = configurable.get("user_config")
     if isinstance(user_config_data, dict):
