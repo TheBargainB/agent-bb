@@ -284,19 +284,36 @@ async def regional_deals_search(query: str, user_config: Dict[str, Any] = None) 
         return None
 
 @tool
-async def advanced_research_tool(query: str) -> Optional[List[Dict[str, Any]]]:
+async def advanced_research_tool(query: str, user_config: Dict[str, Any] = None) -> Optional[List[Dict[str, Any]]]:
     """Perform comprehensive research with advanced search parameters.
     
     High-quality, in-depth search for complex queries requiring detailed analysis.
+    Uses user configuration for regional and language preferences.
+    
+    Args:
+        query: Research query (max 400 characters)
+        user_config: User configuration for personalized results
     """
     try:
         query = validate_query(query)
+        
+        # Get user-specific store domains if available
+        store_domains = get_user_store_domains(user_config or {})
+        
+        # Optimize query based on user preferences
+        country_code = user_config.get("country_code", "US") if user_config else "US"
+        language_code = user_config.get("language_code", "en") if user_config else "en"
+        
+        # Add regional context to query if not already present
+        if country_code and country_code not in query.lower():
+            query = f"{country_code} {query}"
         
         wrapped = TavilySearchResults(
             max_results=10,
             search_depth="advanced",
             include_raw_content=True,
-            chunks_per_source=3
+            chunks_per_source=3,
+            include_domains=store_domains if store_domains else None
         )
         
         result = await wrapped.ainvoke({"query": query})
@@ -314,19 +331,35 @@ async def advanced_research_tool(query: str) -> Optional[List[Dict[str, Any]]]:
         return None
 
 @tool
-async def basic_research_tool(query: str) -> Optional[List[Dict[str, Any]]]:
+async def basic_research_tool(query: str, user_config: Dict[str, Any] = None) -> Optional[List[Dict[str, Any]]]:
     """Quick research for simple queries with fast response times.
     
     Optimized for speed with basic search depth and fewer results.
+    Uses user configuration for regional preferences.
+    
+    Args:
+        query: Research query (max 400 characters)
+        user_config: User configuration for personalized results
     """
     try:
         query = validate_query(query)
+        
+        # Get user-specific store domains if available
+        store_domains = get_user_store_domains(user_config or {})
+        
+        # Optimize query based on user preferences
+        country_code = user_config.get("country_code", "US") if user_config else "US"
+        
+        # Add regional context to query if not already present
+        if country_code and country_code not in query.lower():
+            query = f"{country_code} {query}"
         
         wrapped = TavilySearchResults(
             max_results=5,
             search_depth="basic",
             include_raw_content=False,
-            include_images=True
+            include_images=True,
+            include_domains=store_domains if store_domains else None
         )
         
         result = await wrapped.ainvoke({"query": query})

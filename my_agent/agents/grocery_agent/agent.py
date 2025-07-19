@@ -23,6 +23,21 @@ async def create_grocery_agent(agent_config: dict = None) -> object:
     if "system_prompt" in config and isinstance(user_config, UserConfig):
         base_prompt = config["system_prompt"]
         store_info = f"Store preference: {user_config.store_preference}" if user_config.store_preference != "any" else "Store preference: any store"
+        # Create language-specific response instruction
+        language_instruction = ""
+        if user_config.language_code == "de":
+            language_instruction = "IMPORTANT: Respond in German (Deutsch)."
+        elif user_config.language_code == "nl":
+            language_instruction = "IMPORTANT: Respond in Dutch (Nederlands)."
+        elif user_config.language_code == "fr":
+            language_instruction = "IMPORTANT: Respond in French (Français)."
+        elif user_config.language_code == "es":
+            language_instruction = "IMPORTANT: Respond in Spanish (Español)."
+        elif user_config.language_code == "it":
+            language_instruction = "IMPORTANT: Respond in Italian (Italiano)."
+        else:
+            language_instruction = "IMPORTANT: Respond in English."
+        
         user_context = f"""
 USER PREFERENCES:
 - Country: {user_config.country_code}
@@ -32,6 +47,8 @@ USER PREFERENCES:
 - Household size: {user_config.household_size}
 - {store_info}
 - Store websites: {user_config.store_websites}
+
+{language_instruction}
 
 When searching for products, prioritize the user's preferred store if specified and use the store websites for targeted searches."""
         personalized_prompt = f"{base_prompt}\n{user_context}"

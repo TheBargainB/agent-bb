@@ -35,8 +35,8 @@ class UserConfig(BaseModel):
     name: Optional[str] = Field(default=None, description="User's name for personalization")
     
     # Location
-    country_code: str = Field(default="NL", description="Country code (e.g., 'NL', 'US', 'UK')")
-    language_code: str = Field(default="nl", description="Language code (e.g., 'en', 'nl', 'de')")
+    country_code: str = Field(default="US", description="Country code (e.g., 'US', 'UK', 'DE', 'NL')")
+    language_code: str = Field(default="en", description="Language code (e.g., 'en', 'nl', 'de', 'fr')")
     
     # User preferences
     dietary_restrictions: List[DietaryRestriction] = Field(
@@ -46,4 +46,4 @@ class UserConfig(BaseModel):
     budget_level: BudgetLevel = Field(default=BudgetLevel.MEDIUM, description="Budget level preference")
     household_size: int = Field(default=1, description="Number of people in household")
     store_preference: str = Field(default="any", description="Preferred store for shopping")
-    store_websites: str = Field(default="ah.nl, jumbo.com, lidl.nl", description="Store websites to search") 
+    store_websites: str = Field(default="walmart.com, target.com, amazon.com", description="Store websites to search") 

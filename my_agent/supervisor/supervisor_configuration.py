@@ -18,13 +18,13 @@ class Configuration(BaseModel):
 
     # User preference fields (exposed in UI)
     country_code: str = Field(
-        default="NL",
-        description="Country code (NL, US, UK, DE, FR, etc.) - determines default stores and language",
+        default="US",
+        description="Country code (US, UK, DE, NL, FR, etc.) - determines default stores and language",
         json_schema_extra={"langgraph_nodes": ["supervisor"]}
     )
     
     language_code: str = Field(
-        default="nl",
+        default="en",
         description="Language code (en, nl, de, fr, etc.) for search terms and responses",
         json_schema_extra={"langgraph_nodes": ["supervisor"]}
     )
@@ -54,8 +54,8 @@ class Configuration(BaseModel):
     )
     
     store_websites: str = Field(
-        default="ah.nl, jumbo.com, lidl.nl",
-        description="Store websites to search (comma-separated, e.g., 'ah.nl, jumbo.com, lidl.nl')",
+        default="walmart.com, target.com, amazon.com",
+        description="Store websites to search (comma-separated, e.g., 'walmart.com, target.com, amazon.com')",
         json_schema_extra={"langgraph_nodes": ["supervisor"]}
     )
 
@@ -132,8 +132,8 @@ Always provide personalized grocery shopping assistance adapted to the user's lo
     promotions_system_prompt: str = Field(
         default=f"""Today's date is {today}. You are an expert promotions research agent specialized in finding grocery promotions.
 
-You have access to the following tools: advanced_research_tool and get_todays_date.
-First get today's date then continue to use the advanced_research_tool to search for current grocery promotions and deals.
+You have access to the following tools: promotion_hunter, store_specific_search, regional_deals_search, grocery_news_search, multi_angle_research, and get_todays_date.
+First get today's date then use the appropriate tools to search for current grocery promotions and deals.
 
 When you are done with your research, return the promotion findings to the supervisor agent.""",
         description="The system prompt for the promotions research agent.",
@@ -154,8 +154,8 @@ When you are done with your research, return the promotion findings to the super
         json_schema_extra={"langgraph_nodes": ["promotions_research_agent"]}
     )
     
-    promotions_tools: list[Literal["advanced_research_tool", "get_todays_date"]] = Field(
-        default=["advanced_research_tool", "get_todays_date"],
+    promotions_tools: list[Literal["promotion_hunter", "store_specific_search", "regional_deals_search", "grocery_news_search", "multi_angle_research", "get_todays_date"]] = Field(
+        default=["promotion_hunter", "store_specific_search", "regional_deals_search", "grocery_news_search", "multi_angle_research", "get_todays_date"],
         description="The list of tools to make available to the promotions research agent.",
         json_schema_extra={"langgraph_nodes": ["promotions_research_agent"]}
     )
@@ -164,8 +164,8 @@ When you are done with your research, return the promotion findings to the super
     grocery_system_prompt: str = Field(
         default=f"""Today's date is {today}. You are an expert grocery shopping research agent specialized in finding products and deals.
 
-You have access to the following tools: advanced_research_tool and get_todays_date.
-First get today's date then continue to use the advanced_research_tool to search for grocery products, prices, and availability.
+You have access to the following tools: store_specific_search, product_comparison_search, regional_deals_search, grocery_news_search, multi_angle_research, and get_todays_date.
+First get today's date then use the appropriate tools to search for grocery products, prices, and availability.
 
 When you are done with your research, return the product findings to the supervisor agent.""",
         description="The system prompt for the grocery search agent.",
@@ -186,8 +186,8 @@ When you are done with your research, return the product findings to the supervi
         json_schema_extra={"langgraph_nodes": ["grocery_search_agent"]}
     )
     
-    grocery_tools: list[Literal["advanced_research_tool", "get_todays_date"]] = Field(
-        default=["advanced_research_tool", "get_todays_date"],
+    grocery_tools: list[Literal["store_specific_search", "product_comparison_search", "regional_deals_search", "grocery_news_search", "multi_angle_research", "get_todays_date"]] = Field(
+        default=["store_specific_search", "product_comparison_search", "regional_deals_search", "grocery_news_search", "multi_angle_research", "get_todays_date"],
         description="The list of tools to make available to the grocery search agent.",
         json_schema_extra={"langgraph_nodes": ["grocery_search_agent"]}
     )
