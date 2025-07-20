@@ -105,7 +105,7 @@ async def store_specific_search(query: str, user_config: Dict[str, Any] = None) 
     except Exception as e:
         print(f"Store search failed: {e}")
         # Fallback to basic search
-        return await basic_research_tool(query)
+        return await basic_research_tool(query, user_config)
 
 @tool
 async def promotion_hunter(query: str, user_config: Dict[str, Any] = None) -> Optional[List[Dict[str, Any]]]:
