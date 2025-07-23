@@ -18,12 +18,6 @@ from langchain_community.utilities import SerpAPIWrapper
 from pydantic import BaseModel, Field
 
 
-
-
-class ShoppingSearchInputs(BaseModel):
-    """Inputs to the shopping search tool."""
-    query: str = Field(description="Search query for grocery products")
-
 @tool
 async def google_search(query: str, config: RunnableConfig) -> str:
     """Google Shopping search for grocery products using official SerpAPI wrapper.
