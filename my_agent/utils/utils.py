@@ -23,19 +23,5 @@ def load_chat_model(fully_specified_name: str) -> BaseChatModel:
     Args:
         fully_specified_name (str): String in the format 'provider/model'.
     """
-    # Handle model names that might not include provider prefix
-    parts = fully_specified_name.split("/", maxsplit=1)
-    
-    if len(parts) == 2:
-        # Normal case: "provider/model"
-        provider, model = parts
-    elif len(parts) == 1:
-        # Fallback case: just "model" - assume openai as default provider
-        model = parts[0]
-        provider = "openai"
-        print(f"Warning: Model name '{fully_specified_name}' doesn't include provider. Defaulting to '{provider}/{model}'")
-    else:
-        # Should never happen, but handle gracefully
-        raise ValueError(f"Invalid model name format: '{fully_specified_name}'. Expected 'provider/model' or 'model'")
-    
+    provider, model = fully_specified_name.split("/", maxsplit=1)
     return init_chat_model(model, model_provider=provider)

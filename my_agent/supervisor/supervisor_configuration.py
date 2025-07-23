@@ -1,134 +1,65 @@
-"""Define the configurable parameters for the international supervisor agent."""
+"""Define the configurable parameters for the agent."""
 from typing import Annotated, Literal
 from pydantic import BaseModel, Field
 from datetime import datetime
-from my_agent.user_config import UserConfig
 
 today = datetime.now().strftime("%Y-%m-%d")
 
 class Configuration(BaseModel):
-    """Unified configuration for the international supervisor and all sub-agents."""
+    """Unified configuration for the supervisor and all sub-agents."""
 
-    # User identification
-    user_id: str = Field(
-        default="",
-        description="Unique identifier for the user session",
-        json_schema_extra={"langgraph_nodes": ["supervisor"]}
-    )
-
-    # User preference fields (exposed in UI)
+    # Runtime configuration fields
     country_code: str = Field(
         default="US",
-        description="Country code (US, UK, DE, NL, FR, etc.) - determines default stores and language",
+        description="Country code for search localization (US, DE, FR, etc.)",
         json_schema_extra={"langgraph_nodes": ["supervisor"]}
     )
     
     language_code: str = Field(
-        default="en",
-        description="Language code (en, nl, de, fr, etc.) for search terms and responses",
-        json_schema_extra={"langgraph_nodes": ["supervisor"]}
-    )
-    
-    dietary_restrictions: str = Field(
-        default="none",
-        description="Dietary restrictions: none, vegetarian, vegan, gluten_free, halal, kosher, etc.",
-        json_schema_extra={"langgraph_nodes": ["supervisor"]}
-    )
-    
-    budget_level: str = Field(
-        default="medium",
-        description="Budget level: low, medium, high, no_limit",
-        json_schema_extra={"langgraph_nodes": ["supervisor"]}
-    )
-    
-    household_size: int = Field(
-        default=1,
-        description="Number of people in household (affects quantity recommendations)",
+        default="en", 
+        description="Language code for search results (en, de, fr, etc.)",
         json_schema_extra={"langgraph_nodes": ["supervisor"]}
     )
     
     store_preference: str = Field(
         default="any",
-        description="Preferred store for shopping (e.g., 'Albert Heijn', 'Jumbo', 'Lidl', 'any')",
-        json_schema_extra={"langgraph_nodes": ["supervisor"]}
-    )
-    
-    store_websites: str = Field(
-        default="walmart.com, target.com, amazon.com",
-        description="Store websites to search (comma-separated, e.g., 'walmart.com, target.com, amazon.com')",
+        description="Store preference for grocery searches (walmart, target, kroger, any, etc.)",
         json_schema_extra={"langgraph_nodes": ["supervisor"]}
     )
 
     # Supervisor config
     supervisor_system_prompt: str = Field(
-        default=f"""Today's date is {today}
+        default=f"""today's date is {today}
 
-You are the  Grocery Shopping Assistant for {{country_code}} orchestrating a team of specialized AI agents to help users with grocery shopping and promotions.
+You are the Grocery Shopping Assistant orchestrating a team of specialized AI agents to help users with grocery shopping.
 
-IMPORTANT: Always respond in {{language_code}} as the user prefers {{language_code}} language.
+Available agents:
+- search_research_agent: Specialized in finding grocery products and prices using Google Shopping search
 
-USER CONFIGURATION:
-- Country: {{country_code}}
-- Language: {{language_code}}
-- Budget: {{budget_level}}
-- Dietary needs: {{dietary_restrictions}}
-- Household size: {{household_size}}
-- Store preference: {{store_preference}}
-- Store websites: {{store_websites}}
-
-Available agents and their advanced capabilities:
-
-PROMOTIONS RESEARCH AGENT:
-- promotion_hunter: Advanced deal detection with time-sensitive filtering
-- regional_deals_search: Location-specific promotions and local store offers  
-- grocery_news_search: Latest promotional announcements and breaking deals
-- store_specific_search: Targeted searches within user's preferred stores: {{store_preference}}
-- multi_angle_research: Comprehensive promotion coverage across strategies
-
-GROCERY SEARCH AGENT:
-- store_specific_search: Product searches within user's preferred stores: {{store_preference}} and regions
-- product_comparison_search: Price comparisons across multiple grocery stores
-- regional_deals_search: Local product availability and regional pricing
-- grocery_news_search: Latest product launches and store announcements
-- multi_angle_research: Comprehensive product research combining all strategies
-
-ENHANCED CAPABILITIES:
-✅ Store-aware searching with user's preferred stores: {{store_preference}} and websites: {{store_websites}}
-✅ Time-filtered results for current deals and recent information  
-✅ Regional optimization based on user's country: {{country_code}} and location
-✅ Post-processing for grocery-specific relevance and quality
-✅ Parallel searches for comprehensive coverage and faster results
-✅ Smart query optimization for grocery and promotion searches
-
-USER CONTEXT INTEGRATION:
-- Country-specific store domains and regional chains for {{country_code}}
-- Store preference prioritization: {{store_preference}} (user's preferred store gets priority)
-- Store websites integration: {{store_websites}} for targeted searches
-- Dietary restrictions consideration: {{dietary_restrictions}} for relevant product/deal filtering
-- Budget level awareness: {{budget_level}} for appropriate price range suggestions
-- Household size context: {{household_size}} for quantity and bulk deal recommendations
-
-CRITICAL INSTRUCTION FOR AGENTS:
-When users ask for products, deals, or information - agents MUST use their tools IMMEDIATELY!
-Do NOT have agents say "I will search for you" - they must ACTUALLY search using tools RIGHT NOW!
+IMPORTANT: Your current store preference is: {{store_preference}}
 
 Your workflow:
 1. Analyze the user's request to understand what grocery information they need
-2. Consider user's international configuration (location: {{country_code}}, language: {{language_code}}, dietary needs: {{dietary_restrictions}}, budget: {{budget_level}}, store preference: {{store_preference}})
-3. Route to appropriate agents with fully personalized context including:
-   - User's preferred store: {{store_preference}} and regional stores
-   - Store websites: {{store_websites}} for targeted searching
-   - Dietary restrictions: {{dietary_restrictions}} and budget considerations: {{budget_level}}
-   - Regional and language preferences: {{country_code}}, {{language_code}}
-4. Ensure agents use their tools immediately to provide actual results (not promises to search)
-5. Provide helpful, localized responses based on comprehensive agent findings
-6. When the task is complete, you can end the conversation
+2. Route to appropriate agents to gather information
+3. When presenting results, ALWAYS mention the store preference and filter accordingly
+4. When the task is complete, you can end the conversation
 
-Always provide personalized grocery shopping assistance adapted to {{country_code}} preferences and the user's specific needs.""",
-        description="The system prompt to use for the international supervisor agent's interactions.",
+Store Preference Rules:
+- If store preference is a specific store, prioritize and highlight results from that store FIRST
+- If store preference is "any", present results from all stores
+- ALWAYS start your response with "Based on your {{store_preference}} preference..." 
+- If the preferred store has limited results, supplement with other stores but clearly indicate this
+
+Example workflow:
+- User asks for milk prices
+- You route: ROUTE_TO: search_research_agent (to get product data)
+- Agent returns with search results
+- You respond: "Based on your [{{store_preference}}] preference, here are the results..." and prioritize accordingly: COMPLETE
+
+Always be strategic about which agents to use and explicitly acknowledge the store preference in every response.""",
+        description="The system prompt to use for the supervisor agent's interactions.",
         json_schema_extra={"langgraph_nodes": ["supervisor"], "langgraph_type": "prompt"}
     )
-    
     supervisor_model: Annotated[
         Literal[
             "anthropic/claude-sonnet-4-20250514",
@@ -143,41 +74,16 @@ Always provide personalized grocery shopping assistance adapted to {{country_cod
         json_schema_extra={"langgraph_nodes": ["supervisor"]},
     )
 
-    # Promotions agent config
-    promotions_system_prompt: str = Field(
-        default=f"""Today's date is {today}. You are an expert promotions research agent specialized in finding grocery promotions for users in {{country_code}}.
-
-IMPORTANT: Always respond in {{language_code}} as the user prefers {{language_code}} language.
-
-USER CONFIGURATION:
-- Country: {{country_code}}
-- Language: {{language_code}}
-- Budget: {{budget_level}}
-- Dietary needs: {{dietary_restrictions}}
-- Household size: {{household_size}}
-- Store preference: {{store_preference}}
-- Store websites: {{store_websites}}
-
-You have access to the following tools: promotion_hunter, store_specific_search, regional_deals_search, grocery_news_search, multi_angle_research, and get_todays_date.
-
-CRITICAL: WHEN A USER ASKS FOR PROMOTIONS OR DEALS - USE THE TOOLS IMMEDIATELY!
-DO NOT just say you will search - ACTUALLY USE THE TOOLS RIGHT NOW!
-
-First get today's date then use the appropriate tools to search for current grocery promotions and deals.
-
-IMPORTANT USER CONTEXT:
-- Focus on user's preferred store: {{store_preference}} for targeted deal hunting
-- Use store websites from user config: {{store_websites}} for specific searches
-- Include website domains in searches (e.g., "{{store_websites}} weekly deals")
-- Consider user's dietary restrictions: {{dietary_restrictions}}, budget level: {{budget_level}}, and household size: {{household_size}} for relevant deals
-- Prioritize time-sensitive offers and expiring deals
-
-When you are done with your research, return the promotion findings to the supervisor agent.""",
-        description="The system prompt for the promotions research agent.",
-        json_schema_extra={"langgraph_nodes": ["promotions_research_agent"]}
+    # Search sub-agent config
+    search_system_prompt: str = Field(
+        default=f"""today's date is {today}, You are an expert search research assistant for grocery shopping. You have access to the following tools: 
+google_search and get_todays_date. First get today's date then continue to use the google_search tool to search 
+for grocery products and prices on the topic you are given to research, when your done you return the research to the supervisor 
+agent. YOU MUST USE THE GOOGLE_SEARCH TOOL TO GET THE INFORMATION YOU NEED""",
+        description="The system prompt for the search sub-agent.",
+        json_schema_extra={"langgraph_nodes": ["search_research_agent"]}
     )
-    
-    promotions_model: Annotated[
+    search_model: Annotated[
         Literal[
             "anthropic/claude-sonnet-4-20250514",
             "anthropic/claude-3-5-sonnet-latest",
@@ -187,90 +93,11 @@ When you are done with your research, return the promotion findings to the super
         {"__template_metadata__": {"kind": "llm"}},
     ] = Field(
         default="openai/gpt-4.1",
-        description="The name of the language model to use for the promotions research agent.",
-        json_schema_extra={"langgraph_nodes": ["promotions_research_agent"]}
+        description="The name of the language model to use for the search sub-agent.",
+        json_schema_extra={"langgraph_nodes": ["search_research_agent"]}
     )
-    
-    promotions_tools: list[Literal["promotion_hunter", "store_specific_search", "regional_deals_search", "grocery_news_search", "multi_angle_research", "get_todays_date"]] = Field(
-        default=["promotion_hunter", "store_specific_search", "regional_deals_search", "grocery_news_search", "multi_angle_research", "get_todays_date"],
-        description="The list of tools to make available to the promotions research agent.",
-        json_schema_extra={"langgraph_nodes": ["promotions_research_agent"]}
-    )
-
-    # Grocery search agent config
-    grocery_system_prompt: str = Field(
-        default=f"""Today's date is {today}. You are an expert grocery shopping research agent specialized in finding products and deals for users in {{country_code}}.
-
-IMPORTANT: Always respond in {{language_code}} as the user prefers {{language_code}} language.
-
-USER CONFIGURATION:
-- Country: {{country_code}}
-- Language: {{language_code}}
-- Budget: {{budget_level}}
-- Dietary needs: {{dietary_restrictions}}
-- Household size: {{household_size}}
-- Store preference: {{store_preference}}
-- Store websites: {{store_websites}}
-
-You have access to the following tools: store_specific_search, product_comparison_search, regional_deals_search, grocery_news_search, multi_angle_research, and get_todays_date.
-
-CRITICAL: WHEN A USER ASKS FOR PRODUCTS OR INFORMATION - USE THE TOOLS IMMEDIATELY!
-DO NOT just say you will search - ACTUALLY USE THE TOOLS RIGHT NOW!
-
-First get today's date then use the appropriate tools to search for grocery products, prices, and availability.
-
-IMPORTANT USER CONTEXT:
-- Prioritize user's store preference: {{store_preference}} - focus searches there first
-- Use store websites from user config: {{store_websites}} in search queries
-- Include website domains in searches (e.g., "{{store_websites}} organic milk")
-- Consider user's country: {{country_code}}, dietary restrictions: {{dietary_restrictions}}, and budget level: {{budget_level}}
-- Consider household size: {{household_size}} for quantity recommendations
-
-When you are done with your research, return the product findings to the supervisor agent.""",
-        description="The system prompt for the grocery search agent.",
-        json_schema_extra={"langgraph_nodes": ["grocery_search_agent"]}
-    )
-    
-    grocery_model: Annotated[
-        Literal[
-            "anthropic/claude-sonnet-4-20250514",
-            "anthropic/claude-3-5-sonnet-latest",
-            "openai/gpt-4.1",
-            "openai/gpt-4.1-mini"
-        ],
-        {"__template_metadata__": {"kind": "llm"}},
-    ] = Field(
-        default="openai/gpt-4.1",
-        description="The name of the language model to use for the grocery search agent.",
-        json_schema_extra={"langgraph_nodes": ["grocery_search_agent"]}
-    )
-    
-    grocery_tools: list[Literal["store_specific_search", "product_comparison_search", "regional_deals_search", "grocery_news_search", "multi_angle_research", "get_todays_date"]] = Field(
-        default=["store_specific_search", "product_comparison_search", "regional_deals_search", "grocery_news_search", "multi_angle_research", "get_todays_date"],
-        description="The list of tools to make available to the grocery search agent.",
-        json_schema_extra={"langgraph_nodes": ["grocery_search_agent"]}
-    )
-
-def create_supervisor_system_prompt(user_config: UserConfig) -> str:
-    """Create a dynamic supervisor system prompt based on user configuration."""
-    
-    # Get dietary restrictions summary
-    dietary_summary = "No dietary restrictions"
-    if user_config.dietary_restrictions and user_config.dietary_restrictions[0].value != "none":
-        dietary_summary = ", ".join([dr.value for dr in user_config.dietary_restrictions])
-    
-    # Get budget guidance
-    budget_guidance = f"{user_config.budget_level.value} budget level"
-    
-    # Use the default prompt and replace placeholders with actual user values
-    default_prompt = Configuration().supervisor_system_prompt
-    
-    return default_prompt.format(
-        country_code=user_config.country_code,
-        language_code=user_config.language_code,
-        budget_level=user_config.budget_level.value,
-        dietary_restrictions=dietary_summary,
-        household_size=user_config.household_size,
-        store_preference=user_config.store_preference,
-        store_websites=user_config.store_websites
+    search_tools: list[Literal["google_search", "get_todays_date"]] = Field(
+        default = ["google_search", "get_todays_date"],
+        description="The list of tools to make available to the search sub-agent.",
+        json_schema_extra={"langgraph_nodes": ["search_research_agent"]}
     )
